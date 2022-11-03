@@ -2,6 +2,7 @@
 ## The project aims to provide an example of how a SparkETL can be written.
 
 We will be using the events.csv file for our tests.
+<br>
 https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset?select=events.csv
 
 The aim of the ETL is to answer a rudementary question:
@@ -26,5 +27,6 @@ To run the project .
 2. HADOOP 3 is installed and is running.
 
 The following command can be used to trigger the job:
+```
 $SPARK_HOME/bin/spark-submit --master local --class com.dionesh.App target/common-spark-functions-1.0-SNAPSHOT-jar-with-dependencies.jar
-
+```
