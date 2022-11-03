@@ -6,6 +6,7 @@ import org.apache.spark.sql.{functions => F}
 import com.dionesh.uitilites.SparkUtility.{createSparkSession, createDataFrame}
 import org.apache.spark.sql.expressions.WindowSpec
 import org.apache.spark.sql.expressions.Window
+import com.typesafe.config.ConfigFactory
 /**
  * @author ${user.name}
  */
@@ -17,21 +18,36 @@ object App {
   )
   
   def main(args : Array[String]):Unit = {
+
     val spark: SparkSession = createSparkSession("appName")
     spark.sparkContext.setLogLevel("ERROR")
+    val conf = ConfigFactory.load("etlConf.conf")
 
-    val filePath = "file:///mnt/d/Downloads/retailData/retailData/events.csv"
+    val inputPath = conf.getString("input.path")
+    val inputFormat =  conf.getString("input.format") 
 
-    val eventsDF =  createDataFrame(spark, "csv", options, filePath)
+    val outputPath = conf.getString("output.path")
+    val outputFormat = conf.getString("output.format")
+    val writeMode = conf.getString("output.mode")
+
+    val eventsDF =  createDataFrame(spark, inputFormat, options, inputPath)
     
-    eventsDF
-    .transform(addWeightedLabel)
-    .transform(getEventPerCustomerPerItemId)
-    .transform(convertTimeStampToDate)
-    .transform(getAggregatedResult)
-    .show(false)
-    
+    val statsOfEventsPerItemPerDayDF =
+      eventsDF
+     .transform(addWeightedLabel)
+     .transform(getEventPerCustomerPerItemId)
+     .transform(convertTimeStampToDate)
+     .transform(getAggregatedResult)
+
+    statsOfEventsPerItemPerDayDF
+    .repartition(2)
+    .write
+    .format(outputFormat)
+    .mode(writeMode)
+    .save(outputPath)
+
   }
+
 
   def  convertTimeStampToDate(eventsDF: DataFrame) = {
      eventsDF.withColumn("eventDate", F.to_date(F.from_unixtime(F.col("timestamp") /  1000)))
@@ -55,12 +71,17 @@ object App {
   }
 
   def getAggregatedResult(eventsPerDateDF: DataFrame) = {
+
+    val columnsToGroupBy = List(F.col("eventDate"), F.col("itemid"), F.col("event"))
+    val columnsToGroupForPivot = List(F.col("eventDate"), F.col("itemid"))  
+    
      eventsPerDateDF
-     .groupBy(F.col("eventDate"),F.col("itemid"), F.col("event"))
+     .groupBy(columnsToGroupBy: _*)
       .agg(F.count("*").as("count"))
-      .groupBy(F.col("eventDate"),F.col("itemid"))
+      .groupBy(columnsToGroupForPivot: _*)
       .pivot(F.col("event"))
       .agg(F.sum("count"))
       .na.fill(0)
   }
+  
 }

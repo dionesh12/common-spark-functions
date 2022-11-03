@@ -20,7 +20,5 @@ Sample Output
 |2015-06-15 |39439   |0          |0            |6      |
 |2015-06-19 |281103  |0          |0            |3      |
 
-TODO:
-1. Write a sink
-2. Parameterize the paths of the file read and write.
+
 

@@ -10,10 +10,9 @@ object SparkUtility {
     private def readFile(dataFrameReader: DataFrameReader, filePath: String) = dataFrameReader.load(filePath)
 
 
-    def createDataFrame(spark: SparkSession,format: String, options: Map[String, String] = Map.empty, path: String)  = {
-        val dataFrameReader = spark.read.format(format).options(options)
-        readFile(dataFrameReader, path)
-    }
+    def createDataFrame(spark: SparkSession,format: String, options: Map[String, String] = Map.empty, path: String)  = 
+        readFile(spark.read.format(format).options(options), path)
+
 
 
 }
