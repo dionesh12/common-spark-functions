@@ -46,27 +46,22 @@
   </dependency>
   
   <dependency>
-      <groupId>org.apache.spark</groupId>
-      <artifactId>spark-core_${scala.compat.version}</artifactId>
-      <version>${spark.version}</version>
-  </dependency>
-
-  <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-core_${scala.compat.version}</artifactId>
     <version>${spark.version}</version>
+	<scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>org.apache.hadoop</groupId>
     <artifactId>hadoop-client</artifactId>
     <version>3.3.0</version>
-    <scope>compile</scope>
+    <scope>provided</scope>
 </dependency>
   <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-sql_${scala.compat.version}</artifactId>
     <version>3.2.1</version>
-    <scope>compile</scope>
+    <scope>provided</scope>
 </dependency>
     <!-- Test -->
     <dependency>
@@ -134,13 +129,6 @@
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
         <version>2.0.0</version>
-        <configuration>
-          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-          <junitxml>.</junitxml>
-          <filereports>TestSuiteReport.txt</filereports>
-          <!-- Comma separated list of JUnit test class names to execute -->
-          <jUnitClasses>samples.AppTest</jUnitClasses>
-        </configuration>
         <executions>
           <execution>
             <id>test</id>
@@ -150,6 +138,25 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+	<plugin>
+  <artifactId>maven-assembly-plugin</artifactId>
+  <configuration>
+    <descriptorRefs>
+      <descriptorRef>jar-with-dependencies</descriptorRef>
+    </descriptorRefs>
+  </configuration>
+  <executions>
+    <execution>
+      <id>make-assembly</id>
+      <phase>package</phase>
+      <goals>
+        <goal>single</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+</plugins>
   </build>
+  
+  
 </project>
