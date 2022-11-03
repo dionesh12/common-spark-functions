@@ -31,6 +31,12 @@
       <version>${scala.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.htrace</groupId>
+      <artifactId>htrace-core</artifactId>
+      <version>3.0.4</version>
+  </dependency>
+  
   <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_${scala.compat.version}</artifactId>
@@ -42,12 +48,17 @@
     <artifactId>spark-core_${scala.compat.version}</artifactId>
     <version>${spark.version}</version>
   </dependency>
-
+  <dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-client</artifactId>
+    <version>3.3.0</version>
+    <scope>compile</scope>
+</dependency>
   <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-sql_${scala.compat.version}</artifactId>
     <version>3.2.1</version>
-    <scope>provided</scope>
+    <scope>compile</scope>
 </dependency>
     <!-- Test -->
     <dependency>
@@ -74,7 +85,9 @@
       <version>${spec2.version}</version>
       <scope>test</scope>
     </dependency>
+  
   </dependencies>
+
 
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
